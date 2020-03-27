@@ -2,10 +2,12 @@ const connection = require('../database/connction');
 
 module.exports = {
     async index(request, response){
-        const [count] = await connection('incitents').count();
+        const ong_id =  request.headers.authorization;
+        const [count] = await connection('incitents').where('incitents.ong_id', ong_id).count();
         const {page = 1} = request.query;
         const incidents = await connection('incitents')
                         .join('ongs', 'ongs.id', '=', 'incitents.ong_id')
+                        .where('incitents.ong_id', ong_id)
                         .limit(5)
                         .offset((page-1)*5)
                         .select(['incitents.*', 
